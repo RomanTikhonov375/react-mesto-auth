@@ -1,0 +1,20 @@
+.login__input {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    padding: 0 5px 7px 0;
+    border: 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(204, 204, 204, 1);
+    width: 358px;
+    margin: 5px auto 0;
+    outline: none;
+    color: rgba(204, 204, 204, 1);
+}
+
+@media screen and (max-width:540px) {
+    .popup__input {
+        width: 238px;
+    }
+}

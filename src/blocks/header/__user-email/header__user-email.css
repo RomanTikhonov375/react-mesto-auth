@@ -1,0 +1,11 @@
+.header__user-email {
+    max-height: 20px;
+    margin: 0 24px 0;
+    color: #FFF;
+    text-align: right;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 22px;
+}
