@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import PopupWithForm from "./PopupWithForm.jsx";
 import { useForm } from 'react-hook-form'
@@ -38,10 +38,12 @@ export default function AddPlacePopup(props) {
             name: data.name,
             link: data.link
         }
-            
-        );
-        reset();
+        )
     }
+
+    useEffect(() => {
+      reset();
+    },[props.isOpen])
 
    function handleClose() {
     props.onClose();

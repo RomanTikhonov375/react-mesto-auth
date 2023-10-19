@@ -12,7 +12,7 @@ import EditProfilePopup from './EditProfilePopup.jsx';
 import EditAvatarPopup from './EditAvatarPopup.jsx';
 import AddPlacePopup from './AddPlacePopup.jsx';
 import DeleteConfirmationPopup from './DeleteConfirmationPopup.jsx';
-import {  Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Login from './Login';
 import Register from './Register';
 import { NavLink } from 'react-router-dom';
@@ -20,7 +20,8 @@ import { login, register, checkToken } from '../utils/auth.js';
 import InfoTooltip from './InfoTooltip';
 import ProtectedRouteElement from './ProtectedRouteElement.jsx';
 
-
+// Спасибо за отличное ревью, блок с попапом "можно лучше" сделаю на каникулах, так же интересно если сможешь подсказать, как валидацию через 
+// реакт-хук-форм можно сокраитить ) 
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [currentUser, setCurrentUser] = useState('');
+  const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const [cardDelete, setCardDelete] = useState(null);
@@ -42,6 +43,7 @@ function App() {
   const [headingText, setHeadingText] = useState('')
 
   useEffect(() => {
+    
     api.getInitialCards()
       .then(res =>
         setCards(res))
@@ -57,18 +59,14 @@ function App() {
   }, [])
 
   function handleAddPlaceSubmit({ name, link }) {
+    function makeRequest() {
+      return api.setUserCard({ name, link })
+        .then(res => {
+          setCards([res, ...cards]);
 
-    api.setUserCard({ name, link })
-      .then(res => {
-        setIsLoading(true)
-        setCards([res, ...cards]);
-        closeAllModals();
-      })
-      .finally(
-        setIsLoading(false)
-      )
-      .catch(console.error)
-
+        })
+    }
+    handleSubmit(makeRequest);
   }
 
   function handleCardLike(card, setCards) {
@@ -85,36 +83,40 @@ function App() {
     api.deleteCard(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => { return c._id !== card._id }))
+        closeAllModals();
 
       })
       .catch(console.error);
   }
 
   function handleUpdateAvatar(url) {
-    setIsLoading(true)
-    api.setAvatar(url)
-      .then(res => {
-        setCurrentUser(res);
-        closeAllModals();
-      })
-      .catch(console.error)
-      .finally(() => {
-        setIsLoading(false)
-      }
-      )
+    function makeRequest() {
+      return api.setAvatar(url)
+        .then(res => {
+          setCurrentUser(res);
+        })
+    }
+    handleSubmit(makeRequest);
+
   }
 
   function handleUpdateUser({ name, about }) {
-    setIsLoading(true)
-    api.editingProfile({ name, about })
-      .then(res => {
-        setCurrentUser(res);
-        closeAllModals();
-      })
-      .catch(console.error)
-      .finally(() => {
-        setIsLoading(false)
-      })
+    function makeRequest() {
+      return api.editingProfile({ name, about })
+        .then(res => {
+          setCurrentUser(res);
+        })
+    }
+    handleSubmit(makeRequest);
+  }
+
+  // универсальная функця, которая принимает функцию запроса
+  function handleSubmit(request) {
+    setIsLoading(true);
+    request()
+      .then(closeAllModals)
+      .catch(console.error)    
+      .finally(() => setIsLoading(false));
   }
 
   // Проверка авторизации 
@@ -167,7 +169,6 @@ function App() {
   function handleRegister({ email, password }) {
     return register({ email, password })
       .then((res) => {
-        setIsInfoTooltipOpen(true);
         setIsSuccess(true);
         setHeadingText('Вы успешно зарегестировались!')
         return res;
@@ -176,11 +177,31 @@ function App() {
         if (err.status === 400) {
           console.log('400 - некорректно заполнено одно из полей')
         }
-        setIsInfoTooltipOpen(true);
+        
         setIsSuccess(false);
         setHeadingText('Что-то пошло не так...')
       })
+      .finally(() => {
+        setIsInfoTooltipOpen(true);
+      })
   }
+
+  // Обработчик закрытие попапа по кнопке Esc
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard || isDeleteConfirmationPopupOpen || isInfoTooltipOpen
+
+  useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllModals();
+      }
+    }
+    if(isOpen) { // навешиваем только при открытии
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen]) 
 
   function handleLoggout() {
     localStorage.clear();

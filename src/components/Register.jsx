@@ -43,10 +43,11 @@ export default function Register(props) {
             password: data.password
         }).then(() => {
             navigate('/sign-in');
+            reset();
 
         })
             .catch(console.error);
-        reset();
+        
     }
 
 

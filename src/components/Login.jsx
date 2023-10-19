@@ -45,11 +45,14 @@ export default function Login({ onLogin }) {
         }
 
         ).then(() => {
-            navigate('/')
+            navigate('/');
+            reset();
         })
             .catch(console.error);
-        reset();
+        
     }
+
+    
 
     return (
         <>

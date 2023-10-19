@@ -51,13 +51,16 @@ export default function EditProfilePopup(props) {
             name: data.name,
             about: data.about
         });
-        reset();
     }
 
     function handleClose() {
         props.onClose();
         clearErrors(['name','about'])
     }
+
+    useEffect(() => {
+      reset();
+    },[props.isOpen])
 
     return (
         <PopupWithForm

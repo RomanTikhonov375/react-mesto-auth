@@ -10,7 +10,6 @@ export default function DeleteConfirmationPopup(props) {
             console.log(props)
             e.preventDefault();
             props.onCardDelete(props.card, props.setCards)
-            props.onClose();
         }
 
         
