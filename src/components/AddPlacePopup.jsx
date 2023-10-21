@@ -1,5 +1,6 @@
 import PopupWithForm from "./PopupWithForm.jsx";
 import { useForm } from 'react-hook-form'
+import { useEffect } from "react";
 
 export default function AddPlacePopup(props) {
  
@@ -38,8 +39,13 @@ export default function AddPlacePopup(props) {
             link: data.link
         }
         )
-        reset({'link' : '', 'name' : ''})
     }
+
+    useEffect(() => {
+      clearErrors(["name", "link"]);
+      reset({ link: "", name: "" });
+    }, [props.isOpen]); 
+  
 
 
 
