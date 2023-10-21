@@ -20,8 +20,7 @@ import { login, register, checkToken } from '../utils/auth.js';
 import InfoTooltip from './InfoTooltip';
 import ProtectedRouteElement from './ProtectedRouteElement.jsx';
 
-// Спасибо за отличное ревью, блок с попапом "можно лучше" сделаю на каникулах, так же интересно если сможешь подсказать, как валидацию через 
-// реакт-хук-форм можно сокраитить ) 
+// - 4 часа на поиск неисправности в добавлении 2х карточек ^_^
 
 function App() {
 
@@ -43,19 +42,14 @@ function App() {
   const [headingText, setHeadingText] = useState('')
 
   useEffect(() => {
-    
+
     api.getInitialCards()
-      .then(res =>
-        setCards(res))
-      .catch(console.error);
+      .then(setCards).catch(console.error);
   }, []);
 
   useEffect(() => {
     api.getUserInfo()
-      .then(res => {
-        setCurrentUser(res);
-      })
-      .catch(console.error);
+      .then(setCurrentUser).catch(console.error);
   }, [])
 
   function handleAddPlaceSubmit({ name, link }) {
@@ -115,7 +109,7 @@ function App() {
     setIsLoading(true);
     request()
       .then(closeAllModals)
-      .catch(console.error)    
+      .catch(console.error)
       .finally(() => setIsLoading(false));
   }
 
@@ -177,7 +171,7 @@ function App() {
         if (err.status === 400) {
           console.log('400 - некорректно заполнено одно из полей')
         }
-        
+
         setIsSuccess(false);
         setHeadingText('Что-то пошло не так...')
       })
@@ -191,17 +185,17 @@ function App() {
 
   useEffect(() => {
     function closeByEscape(evt) {
-      if(evt.key === 'Escape') {
+      if (evt.key === 'Escape') {
         closeAllModals();
       }
     }
-    if(isOpen) { // навешиваем только при открытии
+    if (isOpen) { // навешиваем только при открытии
       document.addEventListener('keydown', closeByEscape);
       return () => {
         document.removeEventListener('keydown', closeByEscape);
       }
     }
-  }, [isOpen]) 
+  }, [isOpen])
 
   function handleLoggout() {
     localStorage.clear();

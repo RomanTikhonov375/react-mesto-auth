@@ -41,6 +41,7 @@ export default function EditProfilePopup(props) {
 
 
     useEffect(() => {
+        reset()
         setValue("name", currentUser.name)
         setValue("about", currentUser.about)
     }, [currentUser, props.isOpen]);
@@ -58,9 +59,7 @@ export default function EditProfilePopup(props) {
         clearErrors(['name','about'])
     }
 
-    useEffect(() => {
-      reset();
-    },[props.isOpen])
+ 
 
     return (
         <PopupWithForm

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export default function EditAvatarPopup(props) {
 
-  const { register, handleSubmit, formState: { errors, isDirty, isValid }, clearErrors, reset } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, formState: { errors, isDirty, isValid }, clearErrors, reset } = useForm();
 
 
   const linkRegister = register('link', {
@@ -27,11 +27,12 @@ export default function EditAvatarPopup(props) {
 
   function handleClose() {
     props.onClose();
-    clearErrors('link')
+
   }
 
   useEffect(() => {
-    reset();
+    clearErrors('link')
+    reset({ 'link': '' })
   }, [props.isOpen])
 
   return (
